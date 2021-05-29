@@ -33,7 +33,7 @@ func main() {
 	startTime := time.Now()
 	startPage := 1
 	stillActive := make(chan bool)
-	go bulkLoadJobOffers(JobOfferURL, startPage, startPage+1, stillActive)
+	go bulkLoadJobOffers(startPage, startPage+1, stillActive)
 	if !<-stillActive {
 		prepareOutput()
 		writeOutputToResultFile()
@@ -69,7 +69,7 @@ func writeOutputToResultFile() {
 	checkError(err)
 }
 
-func bulkLoadJobOffers(url string, currentPage int, lastPage int, stillActive chan bool) {
+func bulkLoadJobOffers(currentPage int, lastPage int, stillActive chan bool) {
 	if currentPage <= 0 || currentPage > lastPage {
 		stillActive <- false
 		return
@@ -81,7 +81,7 @@ func bulkLoadJobOffers(url string, currentPage int, lastPage int, stillActive ch
 	jobOffers := unmarshallJobOffers(jsonMap)
 	pagination := unmarshallPagination(jsonMap)
 	foundJobs = append(foundJobs, jobOffers...)
-	go bulkLoadJobOffers(url, currentPage+1, pagination.MaxPages, stillActive)
+	go bulkLoadJobOffers(currentPage+1, pagination.MaxPages, stillActive)
 }
 
 func unmarshallJobOffers(jsonMap map[string]json.RawMessage) []JobOffer {
