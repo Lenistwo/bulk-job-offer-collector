@@ -38,8 +38,7 @@ func main() {
 		prepareOutput()
 		writeOutputToResultFile()
 	}
-	endTime := time.Now()
-	fmt.Printf("Job Offer Load Duration %v", endTime.Sub(startTime))
+	fmt.Printf("Job Offer Load Duration %v", time.Since(startTime))
 }
 
 func prepareOutput() {
@@ -69,7 +68,7 @@ func writeOutputToResultFile() {
 	checkError(err)
 }
 
-func bulkLoadJobOffers(currentPage int, lastPage int, stillActive chan bool) {
+func bulkLoadJobOffers(currentPage, lastPage int, stillActive chan bool) {
 	if currentPage <= 0 || currentPage > lastPage {
 		stillActive <- false
 		return
